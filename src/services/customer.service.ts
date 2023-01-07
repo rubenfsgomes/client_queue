@@ -9,6 +9,10 @@ export class CustomerService {
   constructor(@InjectModel('Customer') private readonly customerModel: Model<Customer>) {}
 
   async addCustomer(customer: Customer) {
+    if (!customer.name) {
+      return { result: 'missing name' };
+    }
+
     const newCustomer = new this.customerModel(customer);
     await newCustomer.save();
   
