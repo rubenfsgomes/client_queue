@@ -16,7 +16,7 @@ export class CustomerController {
     return this.customerService.getNextCustomer();
   }
 
-  @Post('reset')
+  @Get('reset')
   async resetQueue(@Query('code') code: string) {
     return this.customerService.resetQueue(code);
   }
