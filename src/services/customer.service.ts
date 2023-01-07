@@ -11,11 +11,14 @@ export class CustomerService {
   async addCustomer(customer: Customer) {
     const newCustomer = new this.customerModel(customer);
     await newCustomer.save();
+  
+    await this.customerModel.find().sort({ priority: -1, createdAt: 1 }).exec();
+
     return { result: true };
   }
-
+  
   async getNextCustomer() {
-    const customer = await this.customerModel.findOne().sort({ priority: -1, createdAt: 1 }).exec();
+    const customer = await this.customerModel.findOne().sort({ createdAt: 1 }).exec();
     if (customer) {
       await customer.remove();
       return { result: customer };
