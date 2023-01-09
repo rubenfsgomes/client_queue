@@ -2,11 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Customer } from '../models/customer.model';
+const CodeModel = require('../models/code.model');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
 import * as crypto from 'crypto';
+const bcrypt = require('bcrypt');
 
 @Injectable()
 export class CustomerService {
-  constructor(@InjectModel('Customer') private readonly customerModel: Model<Customer>) {}
+  private codeModel: any;
+  constructor(@InjectModel('Customer') private readonly customerModel: Model<Customer>) {
+    this.codeModel = CodeModel;
+  }
 
   async addCustomer(customer: Customer) {
     if (!customer.name) {
@@ -30,19 +38,18 @@ export class CustomerService {
       return { result: null };
     }
   }
-
+  
   async resetQueue(code: string) {
-    const hash = crypto.createHash('sha256').update(process.env.RESET_CODE_SALT + code).digest('hex');
-    if (hash === process.env.RESET_CODE_HASH) {
+    if (jwt.verify(code, process.env.RESET_CODE_SECRET)) {
       await this.customerModel.deleteMany({}).exec();
       return { result: true };
     } else {
       return { result: false };
     }
   }
-
+  
   async askToReset() {
-    const code = crypto.randomBytes(16).toString('hex');
+    const code = jwt.sign({var: process.env.RESET_CODE_HASH}, process.env.RESET_CODE_SECRET);
     return { code: code };
   }
 }

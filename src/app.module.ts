@@ -7,7 +7,7 @@ import { CustomerModule } from './customer.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://rubenfsgomes:mongodbpassword@cluster0.ceqilue.mongodb.net/?retryWrites=true&w=majority'),
+    MongooseModule.forRoot('mongodb+srv://rubenfsgomes:mongodbpassword@cluster0.ceqilue.mongodb.net/?retryWrites=true&w=0'),
     CustomerModule
   ],
   controllers: [AppController],
